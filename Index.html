@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scoreboard</title>
+    <!-- Font Awesome for Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <style>
         /* Base Styles */
         body {
@@ -40,9 +42,9 @@
 
         /* Middle Section */
         #middle-section {
-            background-color: #000; /* Black background */
+            background-color: #000; /* Black background restored */
             color: white;
-            width: 20%;
+            width: 15%; /* Slimmer middle section */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -72,12 +74,14 @@
             padding: 10px 20px;
         }
 
-        /* Buttons */
+        /* Buttons for Scoreboard (Grid) */
         .buttons {
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* Two columns */
             gap: 10px;
             margin-top: 20px;
+            width: 100%;
+            justify-items: center; /* Center buttons horizontally */
         }
 
         .buttons button {
@@ -86,6 +90,7 @@
             border-radius: 10px;
             border: none;
             cursor: pointer;
+            width: 90%; /* Make buttons a bit smaller */
         }
 
         /* Scoreboard */
@@ -171,8 +176,12 @@
 
     <!-- Middle Section -->
     <div id="middle-section">
-        <button class="small" onclick="resetScores()">Reset Scores</button>
-        <button class="small" onclick="startAnimation()">Round Start</button>
+        <button class="small" onclick="resetScores()">
+            <i class="fas fa-redo-alt"></i> <!-- Reset Icon -->
+        </button>
+        <button class="small" onclick="startAnimation()">
+            <i class="fas fa-play"></i> <!-- Play Icon for Round Start -->
+        </button>
         <div id="animation-display" class="hide"></div>
     </div>
 
