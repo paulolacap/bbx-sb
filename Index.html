@@ -16,22 +16,6 @@
             position: relative; /* For logo placement */
         }
 
-        /* Logo Styling (commented out for now) */
-        /* #logo {
-            position: absolute;
-            top: 30px; /* Adjusted to bring the logo further down */
-            left: 50%;
-            transform: translateX(-50%);
-            width: 150px; /* Increased size */
-        } */
-
-        @media (max-width: 768px) {
-            #logo {
-                top: 20px; /* Slightly lower adjustment for smaller screens */
-                width: 120px; /* Adjusted size for mobile */
-            }
-        }
-
         /* Left Side */
         #left-side {
             background-color: #3399ff; /* Blue for Blader 1 */
@@ -104,38 +88,6 @@
             cursor: pointer;
         }
 
-        /* Animation Overlay Styling */
-        #animation-display {
-            font-size: 5em; /* Increased font size for big text */
-            font-weight: bold;
-            color: white;
-            text-align: center;
-            position: fixed; /* Position fixed for overlay */
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 9999; /* Ensure it appears above all other content */
-            background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
-            padding: 20px;
-            border-radius: 10px;
-            width: 80%; /* Make it take up a large portion of the screen */
-            max-width: 600px; /* Set max width for large screens */
-            opacity: 0;
-            animation: fadeInOut 1s linear forwards;
-        }
-
-        /* Keyframe for fade-in/out animation */
-        @keyframes fadeInOut {
-            0% { opacity: 0; transform: scale(0.8); }
-            20% { opacity: 1; transform: scale(1); }
-            80% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0; transform: scale(1.2); }
-        }
-
-        .hide {
-            display: none; /* Hide initially */
-        }
-
         /* Scoreboard */
         .scoreboard {
             display: flex;
@@ -167,12 +119,40 @@
             transform: scale(1.2);
             color: yellow;
         }
+
+        /* Animation Overlay Styling (commented out for now) */
+        /* #animation-display {
+            font-size: 5em; 
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            position: fixed; 
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            background-color: rgba(0, 0, 0, 0.7); 
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 600px;
+            opacity: 0;
+            animation: fadeInOut 1s linear forwards;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: scale(0.8); }
+            20% { opacity: 1; transform: scale(1); }
+            80% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(1.2); }
+        }
+
+        .hide {
+            display: none; 
+        } */
     </style>
 </head>
 <body>
-    <!-- Logo (commented out for now) -->
-    <!-- <img src="http://tiny.cc/lghslogo" alt="Logo" id="logo"> -->
-
     <!-- Left Side -->
     <div id="left-side">
         <div class="scoreboard">
@@ -212,6 +192,9 @@
         </div>
     </div>
 
+    <!-- Audio Element -->
+    <audio id="round-start-audio" src="audio.mp3" preload="auto"></audio>
+
     <script>
         let score1 = 0;
         let score2 = 0;
@@ -239,6 +222,10 @@
         }
 
         function startAnimation() {
+            // Play the round start audio
+            const audio = document.getElementById("round-start-audio");
+            audio.play();
+
             const display = document.getElementById("animation-display");
             const messages = ["Bladers Ready...", "3", "2", "1", "Go Shoot!"];
             let index = 0;
@@ -247,9 +234,6 @@
 
             const interval = setInterval(() => {
                 display.textContent = messages[index];
-                display.style.animation = "none"; // Reset animation
-                display.offsetHeight; // Trigger reflow
-                display.style.animation = ""; // Restart animation
                 index++;
 
                 if (index >= messages.length) {
