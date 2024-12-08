@@ -15,12 +15,12 @@
             height: 100vh;
             display: flex;
             flex-direction: row;
-            position: relative;
+            position: relative; /* For logo placement */
         }
 
         /* Left Side */
         #left-side {
-            background-color: #3399ff;
+            background-color: #3399ff; /* Blue for Blader 1 */
             color: white;
             width: 40%;
             display: flex;
@@ -31,7 +31,7 @@
 
         /* Right Side */
         #right-side {
-            background-color: #ff3333;
+            background-color: #ff3333; /* Red for Blader 2 */
             color: white;
             width: 40%;
             display: flex;
@@ -42,9 +42,9 @@
 
         /* Middle Section */
         #middle-section {
-            background-color: #000;
+            background-color: #000; /* Black background restored */
             color: white;
-            width: 15%;
+            width: 15%; /* Slimmer middle section */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -52,30 +52,14 @@
             text-align: center;
         }
 
-        #middle-section button {
-            padding: 15px 30px;
-            font-size: 1.5em;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-            background-color: #ffffff;
-            color: #000;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-
-        #middle-section button:hover {
-            opacity: 0.8;
-        }
-
-        /* Grid Buttons */
+        /* Buttons for Scoreboard (Grid) */
         .buttons {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(2, 1fr); /* Two columns */
             gap: 10px;
             margin-top: 20px;
             width: 100%;
-            justify-items: center;
+            justify-items: center; /* Center buttons horizontally */
         }
 
         .buttons button {
@@ -84,7 +68,7 @@
             border-radius: 10px;
             border: none;
             cursor: pointer;
-            width: 90%;
+            width: 90%; /* Make buttons a bit smaller */
         }
 
         /* Scoreboard */
@@ -130,9 +114,9 @@
             </div>
         </div>
         <div class="buttons">
-            <button onclick="updateScore(1, 1, 'sf')">SF (+1)</button>
-            <button onclick="updateScore(1, 2)">OF/BF (+2)</button>
-            <button onclick="updateScore(1, 3, 'ef')">EF (+3)</button>
+            <button onclick="updateScore(1, 1, 'spin-finish')">SF (+1)</button>
+            <button onclick="updateScore(1, 2, 'burst-finish')">OF/BF (+2)</button>
+            <button onclick="updateScore(1, 3, 'extreme-finish')">EF (+3)</button>
             <button onclick="updateScore(1, -1)">-1</button>
         </div>
     </div>
@@ -140,10 +124,10 @@
     <!-- Middle Section -->
     <div id="middle-section">
         <button class="small" onclick="resetScores()">
-            <i class="fas fa-redo-alt"></i>
+            <i class="fas fa-redo-alt"></i> <!-- Reset Icon -->
         </button>
         <button class="small" onclick="startAnimation()">
-            <i class="fas fa-play"></i>
+            <i class="fas fa-play"></i> <!-- Play Icon for Round Start -->
         </button>
         <div id="animation-display" class="hide"></div>
     </div>
@@ -157,15 +141,16 @@
             </div>
         </div>
         <div class="buttons">
-            <button onclick="updateScore(2, 1, 'sf')">SF (+1)</button>
-            <button onclick="updateScore(2, 2)">OF/BF (+2)</button>
-            <button onclick="updateScore(2, 3, 'ef')">EF (+3)</button>
+            <button onclick="updateScore(2, 1, 'spin-finish')">SF (+1)</button>
+            <button onclick="updateScore(2, 2, 'burst-finish')">OF/BF (+2)</button>
+            <button onclick="updateScore(2, 3, 'extreme-finish')">EF (+3)</button>
             <button onclick="updateScore(2, -1)">-1</button>
         </div>
     </div>
 
     <!-- Audio Elements -->
     <audio id="spin-finish-audio" src="spin-finish.mp3" preload="auto"></audio>
+    <audio id="burst-finish-audio" src="burst-finish.mp3" preload="auto"></audio>
     <audio id="extreme-finish-audio" src="extreme-finish.mp3" preload="auto"></audio>
     <audio id="round-start-audio" src="audio.mp3" preload="auto"></audio>
 
@@ -173,8 +158,9 @@
         let score1 = 0;
         let score2 = 0;
 
-        function updateScore(team, points, finishType = null) {
+        function updateScore(team, points, soundType) {
             const scoreElement = team === 1 ? document.getElementById("score1") : document.getElementById("score2");
+            const audio = document.getElementById(`${soundType}-audio`);
 
             if (team === 1) {
                 score1 += points;
@@ -184,15 +170,10 @@
                 scoreElement.textContent = score2;
             }
 
+            if (audio) audio.play();
+
             scoreElement.classList.add("updated");
             setTimeout(() => scoreElement.classList.remove("updated"), 300);
-
-            // Play appropriate sound for SF or EF
-            if (finishType === 'sf') {
-                document.getElementById("spin-finish-audio").play();
-            } else if (finishType === 'ef') {
-                document.getElementById("extreme-finish-audio").play();
-            }
         }
 
         function resetScores() {
@@ -207,7 +188,7 @@
             audio.play();
 
             const display = document.getElementById("animation-display");
-            const messages = ["3", "2", "1", "...", "Go!", "Shoot!"];
+            const messages = ["3", "2", "1", "...", "Go"];
             let index = 0;
 
             display.classList.remove("hide");
