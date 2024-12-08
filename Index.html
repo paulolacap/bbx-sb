@@ -15,12 +15,12 @@
             height: 100vh;
             display: flex;
             flex-direction: row;
-            position: relative; /* For logo placement */
+            position: relative;
         }
 
         /* Left Side */
         #left-side {
-            background-color: #3399ff; /* Blue for Blader 1 */
+            background-color: #3399ff;
             color: white;
             width: 40%;
             display: flex;
@@ -31,7 +31,7 @@
 
         /* Right Side */
         #right-side {
-            background-color: #ff3333; /* Red for Blader 2 */
+            background-color: #ff3333;
             color: white;
             width: 40%;
             display: flex;
@@ -42,9 +42,9 @@
 
         /* Middle Section */
         #middle-section {
-            background-color: #000; /* Black background restored */
+            background-color: #000;
             color: white;
-            width: 15%; /* Slimmer middle section */
+            width: 15%;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -68,20 +68,14 @@
             opacity: 0.8;
         }
 
-        /* Smaller Buttons for Reset and Round Start */
-        #middle-section button.small {
-            font-size: 1em;
-            padding: 10px 20px;
-        }
-
-        /* Buttons for Scoreboard (Grid) */
+        /* Grid Buttons */
         .buttons {
             display: grid;
-            grid-template-columns: repeat(2, 1fr); /* Two columns */
+            grid-template-columns: repeat(2, 1fr);
             gap: 10px;
             margin-top: 20px;
             width: 100%;
-            justify-items: center; /* Center buttons horizontally */
+            justify-items: center;
         }
 
         .buttons button {
@@ -90,7 +84,7 @@
             border-radius: 10px;
             border: none;
             cursor: pointer;
-            width: 90%; /* Make buttons a bit smaller */
+            width: 90%;
         }
 
         /* Scoreboard */
@@ -124,37 +118,6 @@
             transform: scale(1.2);
             color: yellow;
         }
-
-        /* Animation Overlay Styling (commented out for now) */
-        /* #animation-display {
-            font-size: 5em; 
-            font-weight: bold;
-            color: white;
-            text-align: center;
-            position: fixed; 
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 9999;
-            background-color: rgba(0, 0, 0, 0.7); 
-            padding: 20px;
-            border-radius: 10px;
-            width: 80%;
-            max-width: 600px;
-            opacity: 0;
-            animation: fadeInOut 1s linear forwards;
-        }
-
-        @keyframes fadeInOut {
-            0% { opacity: 0; transform: scale(0.8); }
-            20% { opacity: 1; transform: scale(1); }
-            80% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0; transform: scale(1.2); }
-        }
-
-        .hide {
-            display: none; 
-        } */
     </style>
 </head>
 <body>
@@ -167,9 +130,9 @@
             </div>
         </div>
         <div class="buttons">
-            <button onclick="updateScore(1, 1)">SF (+1)</button>
+            <button onclick="updateScore(1, 1, 'sf')">SF (+1)</button>
             <button onclick="updateScore(1, 2)">OF/BF (+2)</button>
-            <button onclick="updateScore(1, 3)">EF (+3)</button>
+            <button onclick="updateScore(1, 3, 'ef')">EF (+3)</button>
             <button onclick="updateScore(1, -1)">-1</button>
         </div>
     </div>
@@ -177,10 +140,10 @@
     <!-- Middle Section -->
     <div id="middle-section">
         <button class="small" onclick="resetScores()">
-            <i class="fas fa-redo-alt"></i> <!-- Reset Icon -->
+            <i class="fas fa-redo-alt"></i>
         </button>
         <button class="small" onclick="startAnimation()">
-            <i class="fas fa-play"></i> <!-- Play Icon for Round Start -->
+            <i class="fas fa-play"></i>
         </button>
         <div id="animation-display" class="hide"></div>
     </div>
@@ -194,21 +157,23 @@
             </div>
         </div>
         <div class="buttons">
-            <button onclick="updateScore(2, 1)">SF (+1)</button>
+            <button onclick="updateScore(2, 1, 'sf')">SF (+1)</button>
             <button onclick="updateScore(2, 2)">OF/BF (+2)</button>
-            <button onclick="updateScore(2, 3)">EF (+3)</button>
+            <button onclick="updateScore(2, 3, 'ef')">EF (+3)</button>
             <button onclick="updateScore(2, -1)">-1</button>
         </div>
     </div>
 
-    <!-- Audio Element -->
+    <!-- Audio Elements -->
+    <audio id="spin-finish-audio" src="spin-finish.mp3" preload="auto"></audio>
+    <audio id="extreme-finish-audio" src="extreme-finish.mp3" preload="auto"></audio>
     <audio id="round-start-audio" src="audio.mp3" preload="auto"></audio>
 
     <script>
         let score1 = 0;
         let score2 = 0;
 
-        function updateScore(team, points) {
+        function updateScore(team, points, finishType = null) {
             const scoreElement = team === 1 ? document.getElementById("score1") : document.getElementById("score2");
 
             if (team === 1) {
@@ -221,6 +186,13 @@
 
             scoreElement.classList.add("updated");
             setTimeout(() => scoreElement.classList.remove("updated"), 300);
+
+            // Play appropriate sound for SF or EF
+            if (finishType === 'sf') {
+                document.getElementById("spin-finish-audio").play();
+            } else if (finishType === 'ef') {
+                document.getElementById("extreme-finish-audio").play();
+            }
         }
 
         function resetScores() {
@@ -231,12 +203,11 @@
         }
 
         function startAnimation() {
-            // Play the round start audio
             const audio = document.getElementById("round-start-audio");
             audio.play();
 
             const display = document.getElementById("animation-display");
-            const messages = ["3", "2", "1", "...", "Go","SHOOT!","SHOOT!","SHOOT!","SHOOT!", ""];
+            const messages = ["3", "2", "1", "...", "Go!", "Shoot!"];
             let index = 0;
 
             display.classList.remove("hide");
