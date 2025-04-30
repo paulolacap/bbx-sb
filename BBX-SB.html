@@ -61,6 +61,7 @@
       justify-content: center;
       align-items: center;
       height: 100%;
+      flex-wrap: wrap;
     }
 
     .btn {
@@ -85,6 +86,13 @@
       margin: 20px 0;
     }
 
+    .round {
+      font-size: 36px;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 20px;
+    }
+
     .blader1-score {
       color: white;
     }
@@ -93,17 +101,74 @@
       color: white;
     }
 
-    .log {
-      width: 90%;
-      max-height: 200px;
-      overflow-y: auto;
-      background: rgba(255,255,255,0.9);
-      border: 2px solid black;
-      border-radius: 10px;
-      padding: 10px;
-      margin-top: 10px;
-      text-align: left;
+    /* Log Overlay Styles */
+    .log-overlay {
       display: none; /* Hidden by default */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8); /* Darker overlay */
+      color: white;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .log-content {
+      background: linear-gradient(45deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.7)); /* Darker gradient background for log */
+      padding: 20px;
+      border-radius: 10px;
+      max-height: 80%;
+      overflow-y: auto;
+    }
+
+    /* Responsive Design for Portrait Mode */
+    @media (max-width: 768px) {
+      .side {
+        width: 45%;
+      }
+      .middle {
+        width: 90%;
+      }
+      .btn {
+        width: 100%;
+        font-size: 14px;
+        margin: 5px 0;
+      }
+      .score {
+        font-size: 100px;
+      }
+      .round {
+        font-size: 30px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .side {
+        width: 50%;
+      }
+      .middle {
+        width: 100%;
+      }
+      .score {
+        font-size: 80px;
+      }
+      .btn {
+        width: 90%;
+        font-size: 14px;
+        margin: 5px 0;
+      }
+      .round {
+        font-size: 24px;
+      }
+    }
+
+    /* Undo and Close Button in the Log Overlay */
+    .log-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
     }
 
   </style>
@@ -126,18 +191,20 @@
     <button class="btn" onclick="addPoints(1, 3, 'Xtreme Finish')">XTREME</button>
   </div>
 
-  <!-- Scores + Log + Controls -->
+  <!-- Scores + Round + Buttons + Log + Controls -->
   <div class="middle">
+    <div class="round" id="round">Round 0</div>
     <div class="score">
       <span id="score1" class="blader1-score">0</span>
-      <span style="margin: 0 50px;">-</span>
       <span id="score2" class="blader2-score">0</span>
     </div>
-    <button class="btn" onclick="resetScores()">RESET</button>
-    <button class="btn" onclick="undoLast()">UNDO</button>
-    <button id="logButton" class="btn" onclick="toggleLog()" style="display: none;">LOGS</button>
 
-    <div class="log" id="logBox"></div>
+    <!-- Buttons between scores -->
+    <div>
+      <button class="btn" onclick="resetScores()">RESET</button>
+      <button class="btn" onclick="undoLast()">UNDO</button>
+      <button class="btn" onclick="toggleLog()">LOGS</button>
+    </div>
   </div>
 
   <!-- Right buttons (Blader 2) -->
@@ -150,12 +217,23 @@
 
 </div>
 
+<!-- Log Overlay -->
+<div id="logOverlay" class="log-overlay">
+  <div class="log-content">
+    <h3>Game Log</h3>
+    <div id="logBox"></div>
+    <div class="log-buttons">
+      <button class="btn" onclick="undoFromLog()">UNDO</button>
+      <button class="btn" onclick="closeLog()">Close</button>
+    </div>
+  </div>
+</div>
+
 <script>
   let score1 = 0;
   let score2 = 0;
   let round = 0;
   let log = [];
-  let logVisible = false;
 
   function addPoints(blader, points, finishType) {
     if (blader === 1) {
@@ -167,6 +245,8 @@
     }
 
     round++;
+    document.getElementById('round').innerText = `Round ${round}`;
+    
     let color = blader === 1 ? '#2196F3' : '#f44336';
     let entry = `<span style="color:${color}">Round ${round}: Blader ${blader} wins by ${finishType}</span>`;
     log.push({ blader, points, finishType, entry });
@@ -175,17 +255,7 @@
 
   function updateLog() {
     let logBox = document.getElementById('logBox');
-    let logButton = document.getElementById('logButton');
-    
-    if (log.length === 0) {
-      logBox.style.display = "none";
-      logButton.style.display = "none";
-    } else {
-      logButton.style.display = "inline-block";
-      logBox.innerHTML = log.map(item => item.entry).join('<br>');
-      logBox.style.display = logVisible ? "block" : "none";
-      logBox.scrollTop = logBox.scrollHeight;
-    }
+    logBox.innerHTML = log.map(item => item.entry).join('<br>');
   }
 
   function resetScores() {
@@ -193,9 +263,9 @@
     score2 = 0;
     round = 0;
     log = [];
-    logVisible = false;
     document.getElementById('score1').innerText = score1;
     document.getElementById('score2').innerText = score2;
+    document.getElementById('round').innerText = `Round ${round}`;
     updateLog();
   }
 
@@ -212,13 +282,38 @@
         document.getElementById('score2').innerText = score2;
       }
       round--;
+      document.getElementById('round').innerText = `Round ${round}`;
       updateLog();
     }
   }
 
   function toggleLog() {
-    logVisible = !logVisible;
+    let logOverlay = document.getElementById('logOverlay');
+    logOverlay.style.display = logOverlay.style.display === 'none' || logOverlay.style.display === '' ? 'block' : 'none';
     updateLog();
+  }
+
+  function closeLog() {
+    let logOverlay = document.getElementById('logOverlay');
+    logOverlay.style.display = 'none';
+  }
+
+  function undoFromLog() {
+    let lastLog = log.pop();
+    if (lastLog) {
+      if (lastLog.blader === 1) {
+        score1 -= lastLog.points;
+        if (score1 < 0) score1 = 0;
+        document.getElementById('score1').innerText = score1;
+      } else {
+        score2 -= lastLog.points;
+        if (score2 < 0) score2 = 0;
+        document.getElementById('score2').innerText = score2;
+      }
+      round--;
+      document.getElementById('round').innerText = `Round ${round}`;
+      updateLog();
+    }
   }
 </script>
 
