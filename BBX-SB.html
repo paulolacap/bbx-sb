@@ -39,11 +39,10 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
     }
 
     .side {
-      width: 20%;
+      flex: 1;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -52,7 +51,7 @@
     }
 
     .middle {
-      width: 60%;
+      flex: 1;
       text-align: center;
       color: black;
       font-weight: bold;
@@ -61,19 +60,18 @@
       justify-content: center;
       align-items: center;
       height: 100%;
-      flex-wrap: wrap;
     }
 
     .btn {
       background: #555;
       color: white;
       border: none;
-      padding: 10px 20px;
+      padding: 20px;
       margin: 10px 0;
-      font-size: 16px;
-      border-radius: 5px;
+      font-size: 24px;
+      border-radius: 10px;
       cursor: pointer;
-      width: 120px;
+      width: 150px;
     }
 
     .btn:hover {
@@ -81,23 +79,19 @@
     }
 
     .score {
-      font-size: 150px;
+      font-size: 200px;
       color: white;
       margin: 20px 0;
     }
 
     .round {
-      font-size: 36px;
+      font-size: 48px;
       font-weight: bold;
       color: white;
       margin-bottom: 20px;
     }
 
-    .blader1-score {
-      color: white;
-    }
-
-    .blader2-score {
+    .blader1-score, .blader2-score {
       color: white;
     }
 
@@ -129,47 +123,32 @@
       margin-top: 20px;
     }
 
-    /* Proper Portrait Mode Layout */
+    /* Portrait Mode */
     @media (max-width: 768px) {
       .scoreboard {
         flex-direction: column;
         justify-content: flex-start;
-        align-items: center;
       }
 
       .round {
         margin-top: 20px;
-        font-size: 30px;
+        font-size: 36px;
       }
 
       .score {
-        font-size: 100px;
+        font-size: 120px;
       }
 
       .side {
-        width: 100%;
         flex-direction: row;
-        justify-content: space-around;
-        margin: 10px 0;
-      }
-
-      .middle {
-        width: 100%;
-        text-align: center;
+        flex-wrap: wrap;
+        justify-content: center;
       }
 
       .btn {
         width: 40%;
-        font-size: 16px;
-        margin: 5px 2px;
-      }
-
-      /* Keep reset/undo/logs buttons full width */
-      .middle > div {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        margin-top: 10px;
+        font-size: 18px;
+        margin: 5px;
       }
 
       .middle > div .btn {
@@ -202,7 +181,7 @@
   <div class="middle">
     <div class="round" id="round">Round 0</div>
     <div class="score">
-      <span id="score1" class="blader1-score">0</span> - <span id="score2" class="blader2-score">0</span>
+      <span id="score1" class="blader1-score">0</span> <span id="score2" class="blader2-score">0</span>
     </div>
 
     <div>
@@ -299,19 +278,19 @@
   }
 
   function closeLog() {
-    let logOverlay = document.getElementById('logOverlay');
-    logOverlay.style.display = 'none';
+    document.getElementById('logOverlay').style.display = 'none';
   }
 
+  // Undo button inside the log
   function undoFromLog() {
-    let lastLog = log.pop();
-    if (lastLog) {
-      if (lastLog.blader === 1) {
-        score1 -= lastLog.points;
+    let last = log.pop();
+    if (last) {
+      if (last.blader === 1) {
+        score1 -= last.points;
         if (score1 < 0) score1 = 0;
         document.getElementById('score1').innerText = score1;
       } else {
-        score2 -= lastLog.points;
+        score2 -= last.points;
         if (score2 < 0) score2 = 0;
         document.getElementById('score2').innerText = score2;
       }
